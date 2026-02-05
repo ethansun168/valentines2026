@@ -1,3 +1,3 @@
 # Fun valentines webpage
 
-[valentines.ethansun.org](valentines.ethansun.org)
+[valentines.ethansun.org](https://valentines.ethansun.org)
