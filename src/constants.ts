@@ -3,5 +3,4 @@ export enum Step {
   buttonClick,
   yesClick,
   stats,
-  secret
 }

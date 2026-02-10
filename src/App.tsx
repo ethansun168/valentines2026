@@ -83,16 +83,69 @@ function App() {
             </>
             : step == Step.yesClick ?
               <div className='gifContainer'>
+                <div style={{
+                  fontSize: 24,
+                  fontWeight: 600
+                }}>
+                  yay!!! :)))
+                </div>
+                <br />
+                <br />
                 <div className='gifs'>
                   <img src={CatNod} />
                   <img src={CatNod} />
                   <img src={CatNod} />
                 </div>
-                <button className='button' onClick={() => {
-                  setStep(Step.stats);
-                }}>
-                  stats
+
+                <button className='button'
+                  style={{
+                    position: 'absolute',
+                    top: '10px',
+                    left: '10px',
+                  }}
+
+                  onClick={() => {
+                    setStep(Step.pageLoad);
+                    setNoCount(0);
+                    setCodeFail(false)
+                    setCode("");
+                  }}>
+                  back
                 </button>
+
+                <div className='stats'>
+                  {
+                    noCount === 0 ?
+                      <p>thanks for not rejecting me!!</p> :
+                      <p>
+                        but you tried rejecting me <b>{noCount}</b> times... &#x1F624;
+                      </p>
+                  }
+
+                  <form onSubmit={async (e) => {
+                    e.preventDefault()
+                    setCodeFail(false)
+                    const hashedCode = await hashString(code)
+                    if (hashedCode !== "758a339c5c88eb814c93021f5bdb888559d8e0d105278df40586e7e1fddbed2a") {
+                      setCodeFail(true)
+                      return
+                    }
+                    setStep(Step.stats)
+                  }}>
+                    <label>secret code:</label>
+                    <br />
+                    <input
+                      type='text'
+                      value={code}
+                      onChange={(e) => { setCode(e.target.value) }}
+                    />
+                    <br />
+                    <label>{codeFail ? "not the right code >:)" : ""}</label>
+                    <br />
+                    <input className='button' type='submit' />
+                  </form>
+                </div>
+
               </div>
               : step === Step.stats ?
                 <div className='stats'>
@@ -106,41 +159,24 @@ function App() {
                   <p>
                     we've gone on <b>2</b> big girl trips together! &#x1F970;
                   </p>
-                  {
-                    noCount === 0 ?
-                      <p>thanks for not rejecting me!!</p> :
-                      <p>
-                        you tried rejecting me <b>{noCount}</b> times... &#x1F624;
-                      </p>
-                  }
+                  <br />
+
+                  &#10084;&#65039;
+                  &#10084;&#65039;
+                  &#10084;&#65039;
+                  I love you!
+                  &#10084;&#65039;
+                  &#10084;&#65039;
+                  &#10084;&#65039;
+
                   <button className='button' onClick={() => {
                     setStep(Step.pageLoad);
                     setNoCount(0);
+                    setCode("");
+                    setCodeFail(false)
                   }}>
                     back
                   </button>
-                  <form onSubmit={async (e) => {
-                    e.preventDefault()
-                    setCodeFail(false)
-                    const hashedCode = await hashString(code)
-                    if (hashedCode !== "758a339c5c88eb814c93021f5bdb888559d8e0d105278df40586e7e1fddbed2a") {
-                      setCodeFail(true)
-                      return
-                    }
-                    setStep(Step.secret)
-                  }}>
-                    <label>secret code:</label>
-                    <br />
-                    <input
-                      type='text'
-                      value={code}
-                      onChange={(e) => { setCode(e.target.value) }}
-                    />
-                    <br />
-                    <label>{codeFail ? "failed" : ""}</label>
-                    <br />
-                    <input className='button' type='submit' />
-                  </form>
                 </div>
                 :
                 <Secret />
