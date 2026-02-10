@@ -1,6 +1,8 @@
 body {
   background-color: #FBCFE8;
   margin: 0px;
+  max-width: 100%;
+  overflow-x: hidden;
 }
 
 .images {
@@ -82,4 +84,27 @@ body {
   flex-direction: column;
   justify-content: center;
   align-items: center;
+}
+
+form {
+  text-align: center;
+  width: 100%;
+  max-width: 320px; /* Keeps it from stretching too wide */
+  margin-top: 20px;
+}
+
+label {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 0px;
+  padding: 0px;
+}
+
+input[type='text'] {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 20px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 1rem;
 }

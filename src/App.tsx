@@ -4,6 +4,7 @@ import PrankButton from './PrankButton';
 import Flowers from './Flowers';
 import { Step } from './constants';
 import CatNod from './catnod.gif'
+import { Secret } from './Secret';
 
 interface Heart {
   id: number;
@@ -18,6 +19,9 @@ function App() {
   const days = Math.floor((new Date().getTime() - new Date("2024-6-9").getTime()) / 86400000);
 
   const [hearts, setHearts] = useState<Heart[]>([]);
+  const [code, setCode] = useState("");
+
+  const [codeFail, setCodeFail] = useState(false);
 
   const explode = () => {
     const newHearts = Array.from({ length: 20 }).map((_, i) => ({
@@ -31,6 +35,14 @@ function App() {
 
     setTimeout(() => setHearts([]), 1000);
   };
+
+  async function hashString(message: string) {
+    const msgBuffer = new TextEncoder().encode(message); // Encode string as Uint8Array
+    const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer); // Hash the message
+    const hashArray = Array.from(new Uint8Array(hashBuffer)); // Convert ArrayBuffer to Array
+    const hashHex = hashArray.map(b => ('00' + b.toString(16)).slice(-2)).join(''); // Convert bytes to hex string
+    return hashHex;
+  }
 
   return (
     <>
@@ -82,32 +94,56 @@ function App() {
                   stats
                 </button>
               </div>
-              :
-              <div className='stats'>
-                <p>
-                  we've been together for: <b>{Math.floor((new Date().getTime() - new Date("2024-6-9").getTime()) / 86400000)} days! </b>
+              : step === Step.stats ?
+                <div className='stats'>
+                  <p>
+                    we've been together for: <b>{Math.floor((new Date().getTime() - new Date("2024-6-9").getTime()) / 86400000)} days! </b>
 
-                </p>
-                <p>
-                  my heart has beaten for you <b>{(days * 100000).toLocaleString()}</b> times since we've been together
-                </p>
-                <p>
-                  we've gone on <b>2</b> big girl trips together! &#x1F970;
-                </p>
-                {
-                  noCount === 0 ?
-                    <p>thanks for not rejecting me!!</p> :
-                    <p>
-                      you tried rejecting me <b>{noCount}</b> times... &#x1F624;
-                    </p>
-                }
-                <button className='button' onClick={() => {
-                  setStep(Step.pageLoad);
-                  setNoCount(0);
-                }}>
-                  back
-                </button>
-              </div>
+                  </p>
+                  <p>
+                    my heart has beaten for you <b>{(days * 100000).toLocaleString()}</b> times since we've been together
+                  </p>
+                  <p>
+                    we've gone on <b>2</b> big girl trips together! &#x1F970;
+                  </p>
+                  {
+                    noCount === 0 ?
+                      <p>thanks for not rejecting me!!</p> :
+                      <p>
+                        you tried rejecting me <b>{noCount}</b> times... &#x1F624;
+                      </p>
+                  }
+                  <button className='button' onClick={() => {
+                    setStep(Step.pageLoad);
+                    setNoCount(0);
+                  }}>
+                    back
+                  </button>
+                  <form onSubmit={async (e) => {
+                    e.preventDefault()
+                    setCodeFail(false)
+                    const hashedCode = await hashString(code)
+                    if (hashedCode !== "758a339c5c88eb814c93021f5bdb888559d8e0d105278df40586e7e1fddbed2a") {
+                      setCodeFail(true)
+                      return
+                    }
+                    setStep(Step.secret)
+                  }}>
+                    <label>secret code:</label>
+                    <br />
+                    <input
+                      type='text'
+                      value={code}
+                      onChange={(e) => { setCode(e.target.value) }}
+                    />
+                    <br />
+                    <label>{codeFail ? "failed" : ""}</label>
+                    <br />
+                    <input className='button' type='submit' />
+                  </form>
+                </div>
+                :
+                <Secret />
       }
       </div>
       <Flowers />
